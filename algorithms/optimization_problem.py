@@ -1,7 +1,4 @@
 import random
-from tools import graph_tools
-
-graph, vertices, edges = graph_tools.load_graph("../data.txt")
 
 # Losowy podział grafu na dwa podzbiory
 def random_partition(graph):
@@ -11,8 +8,9 @@ def random_partition(graph):
     print("Losowy podział: ",partition)
     return partition
 
+
 # Funkcja celu dla maximum cut
-def max_cut_goal_function(graph, partition):
+def max_cut_goal_function(graph, partition, output):
     total_cut = 0
 
     for node1 in graph:
@@ -20,8 +18,10 @@ def max_cut_goal_function(graph, partition):
             if node1 < node2:
                 if partition[node1] != partition[node2]:
                     total_cut += weight
-    print("Całowity podział: ", total_cut)
+    if output:
+        print("Całowity podział: ", total_cut)
     return total_cut
+
 
 # Funkcja sprawdzająca sąsiedztwo bieżącego rozwiązania
 def get_neighboorhood_solution(graph, partition):
@@ -34,7 +34,7 @@ def get_neighboorhood_solution(graph, partition):
 
         print("=================")
         print("Sąsiad: ", node)
-        neighbor_total_cut = max_cut_goal_function(graph, neighbor_partition)
+        neighbor_total_cut = max_cut_goal_function(graph, neighbor_partition, True)
 
         neighborhood.append((neighbor_partition, neighbor_total_cut))
 
