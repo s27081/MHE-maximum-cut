@@ -1,6 +1,7 @@
 from algorithms.optimization_problem import max_cut_goal_function, random_partition, get_neighboorhood_solution
 import random
 
+
 # Funkcja wspinaczkowa z wyborem najlepszego sąsiada
 def hill_climb_best_neighbour(graph):
 
@@ -24,7 +25,6 @@ def hill_climb_best_neighbour(graph):
             if best_cut <= solution:
                 break
 
-            partition = best_partition
             solution = best_cut
 
         print("=============")

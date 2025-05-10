@@ -1,5 +1,6 @@
 import random
 
+
 # Losowy podział grafu na dwa podzbiory
 def random_partition(graph):
     partition = {}
@@ -24,18 +25,19 @@ def max_cut_goal_function(graph, partition, output):
 
 
 # Funkcja sprawdzająca sąsiedztwo bieżącego rozwiązania
-def get_neighboorhood_solution(graph, partition):
+def get_neighboorhood_solution(graph, partition, output):
 
     neighborhood = []
 
     for node in graph:
         neighbor_partition = partition.copy()
         neighbor_partition[node] = 1 - neighbor_partition[node]
-
-        print("=================")
-        print("Sąsiad: ", node)
-        neighbor_total_cut = max_cut_goal_function(graph, neighbor_partition, True)
-
+        if output:
+            print("=================")
+            print("Sąsiad: ", node)
+            neighbor_total_cut = max_cut_goal_function(graph, neighbor_partition, True)
+        else:
+            neighbor_total_cut = max_cut_goal_function(graph, neighbor_partition, False)
         neighborhood.append((neighbor_partition, neighbor_total_cut))
 
     return neighborhood

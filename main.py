@@ -28,7 +28,7 @@ def main():
 
     elif args.neighborhood:
         partition = optimization.random_partition(graph)
-        optimization.get_neighboorhood_solution(graph, partition)
+        optimization.get_neighboorhood_solution(graph, partition, True)
         
     elif args.full_search:
         full.full_search(graph, vertices)
@@ -40,7 +40,7 @@ def main():
         hill.hill_climb_best_neighbour_random(graph)
 
     elif args.tabu_search:
-        tabu.tabu_search(graph, 1200)
+        tabu.tabu_search(graph, 80, 8)
 
 
 

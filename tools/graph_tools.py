@@ -17,7 +17,7 @@ def load_graph(filename):
 
             edges.add((node1, node2, weight))
 
-        print("Graf: \n", graph)
+        print("Graf: \n", dict(sorted(graph.items())))
         print("Liczba wieszchołków: ", len(graph))
         print("Liczba krawędzi: ", len(edges))
-    return graph, len(graph), len(edges)
+    return dict(sorted(graph.items())), len(graph), len(edges)

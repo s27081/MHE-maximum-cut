@@ -1,17 +1,12 @@
 from algorithms.optimization_problem import max_cut_goal_function
+import itertools
 
 
 # Generowanie wszystkich podziałów
 def generate_all_partitions(vertices):
-    number_of_partitions = 2 ** vertices
     partitions = []
-    for i in range(number_of_partitions):
-        partition = []
-        for j in range(vertices):
-            if (i >> j) & 1:
-                partition.append(1)
-            else:
-                partition.append(0)
+    for i in itertools.product([0, 1], repeat=vertices):
+        partition = list(i)
         partitions.append(partition)
     return partitions
 
