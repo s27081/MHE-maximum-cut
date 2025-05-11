@@ -15,9 +15,10 @@ def main():
     parser.add_argument("-w1", "--hill_climb_classic", action="store_true", help="Funkcja wspinaczkowa z wyborem najlepszego sąsiada")
     parser.add_argument("-w2", "--hill_climb_random", action="store_true", help="Funkcja wspinaczkowa z wyborem losowego sąsiada")
     parser.add_argument("-t", "--tabu_search", action="store_true", help="Funkcja tabu")
+    parser.add_argument("-g", "--graph", required=True, help="Ścieżka do pliku z grafem")
 
     args = parser.parse_args()
-    graph, vertices, edges = graph_tools.load_graph("./tools/data.txt")
+    graph, vertices, edges = graph_tools.load_graph(args.graph)
 
     if args.random_partition:
         optimization.random_partition(graph)

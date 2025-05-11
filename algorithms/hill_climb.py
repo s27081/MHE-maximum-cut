@@ -11,7 +11,7 @@ def hill_climb_best_neighbour(graph):
     initial_solution = solution
 
     while True:
-        neighbours = get_neighboorhood_solution(graph, partition)
+        neighbours = get_neighboorhood_solution(graph, partition, False)
         best_neighbour = 0
         best_cut = solution
         best_partition = partition
@@ -40,14 +40,14 @@ def hill_climb_best_neighbour(graph):
 def hill_climb_best_neighbour_random(graph):
 
     partition = random_partition(graph)
-    initial_partition = partition
+    initial_partition = partition.copy()
     solution = max_cut_goal_function(graph, partition, False)
     initial_solution = solution
-    best_cut = 0
-    best_partition = {}
+    best_cut = solution
+    best_partition = partition.copy()
 
     while True:
-        neighbours = get_neighboorhood_solution(graph, partition)
+        neighbours = get_neighboorhood_solution(graph, partition, False)
 
         improving_neighbours = []
         for p, cut in neighbours:
