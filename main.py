@@ -4,6 +4,7 @@ import algorithms.optimization_problem as optimization
 import algorithms.full_search as full
 import algorithms.hill_climb as hill
 import algorithms.tabu_search as tabu
+import algorithms.simulate_annealing as annealing
 
 def main():
     parser = argparse.ArgumentParser(description="Maximum cut problem")
@@ -16,6 +17,13 @@ def main():
     parser.add_argument("-w2", "--hill_climb_random", action="store_true", help="Funkcja wspinaczkowa z wyborem losowego sąsiada")
     parser.add_argument("-t", "--tabu_search", action="store_true", help="Funkcja tabu")
     parser.add_argument("-g", "--graph", required=True, help="Ścieżka do pliku z grafem")
+    parser.add_argument("-ti", "--tabu_iterations", type=int, default=80, help="Liczba iteracji dla tabu")
+    parser.add_argument("-tl", "--tabu_list_size", type=int, default=8, help="Rozmiar listy tabu")
+    parser.add_argument("-th", "--tabu_history_size", type=int, default=10, help="Rozmiar historii tabu")
+    parser.add_argument("-s", "--simulate_annealing", action="store_true", help="Funkcja symulacji wyżarzania")
+    parser.add_argument("-st", "--simulate_annealing_temperature", type=int, default=1000, help="Tempeatura wyżarzania")
+    parser.add_argument("-si", "--simulate_annealing_max_iteration", type=int, default=1000, help="Iteracje wyżarzania")
+    parser.add_argument("-sr", "--simulate_annealing_cooling_rate", type=float, default=0.95, help="Ratio wychładzania")
 
     args = parser.parse_args()
     graph, vertices, edges = graph_tools.load_graph(args.graph)
@@ -41,7 +49,16 @@ def main():
         hill.hill_climb_best_neighbour_random(graph)
 
     elif args.tabu_search:
-        tabu.tabu_search(graph, 80, 8)
+        tabu.tabu_search(graph,
+                max_iterations=args.tabu_iterations,
+                tabu_list_size=args.tabu_list_size,
+                tabu_history_size=args.tabu_history_size)
+
+    elif args.simulate_annealing:
+        annealing.simulate_annealing(graph,
+                temperature=args.simulate_annealing_temperature,
+                max_iter=args.simulate_annealing_max_iteration,
+                cooling_rate=args.simulate_annealing_cooling_rate)
 
 
 
