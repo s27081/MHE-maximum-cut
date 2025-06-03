@@ -28,10 +28,10 @@ def main():
     parser.add_argument("-gm", "--genetic_main", action="store_true", help="Funkcja genetyczna")
     parser.add_argument("-gmg", "--genetic_main_generations", type=int, default=50, help="Generacje")
     parser.add_argument("-gmp", "--genetic_main_population_size", type=int, default=20, help="Populacja")
-    parser.add_argument("-gmc", "--genetic_main_crossover", type=str, default="one_point", help="Łączenie generacji")
+    parser.add_argument("-gmc", "--genetic_main_crossover", type=str, choices=["one_point", "uniform"],  default="one_point", help="Łączenie generacji")
     parser.add_argument("-gmm", "--genetic_main_mutation_rate", type=float, default=0.1, help="Współczynnik mutacji")
-    parser.add_argument("-gmt", "--genetic_main_mutation_method", type=str, default="bit_flip_mutation", help="Rodzaj mutacji")
-    parser.add_argument("-gms", "--genetic_main_stop_condition", type=str, default="no_improvement", help="Warunek zakończenia")
+    parser.add_argument("-gmt", "--genetic_main_mutation_method", type=str, choices=["bit_flip_mutation", "swap_mutation"], default="bit_flip_mutation", help="Rodzaj mutacji")
+    parser.add_argument("-gms", "--genetic_main_stop_condition", type=str, choices=["max_generations", "no_improvement"], default="no_improvement", help="Warunek zakończenia")
     parser.add_argument("-gmi", "--genetic_main_max_no_improving_generations", type=int, default=10, help="Limit generacji bez poprawy")
 
     args = parser.parse_args()
