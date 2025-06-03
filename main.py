@@ -5,6 +5,7 @@ import algorithms.full_search as full
 import algorithms.hill_climb as hill
 import algorithms.tabu_search as tabu
 import algorithms.simulate_annealing as annealing
+import algorithms.genetic_main as gen_main
 
 def main():
     parser = argparse.ArgumentParser(description="Maximum cut problem")
@@ -24,6 +25,14 @@ def main():
     parser.add_argument("-st", "--simulate_annealing_temperature", type=int, default=1000, help="Tempeatura wyżarzania")
     parser.add_argument("-si", "--simulate_annealing_max_iteration", type=int, default=1000, help="Iteracje wyżarzania")
     parser.add_argument("-sr", "--simulate_annealing_cooling_rate", type=float, default=0.95, help="Ratio wychładzania")
+    parser.add_argument("-gm", "--genetic_main", action="store_true", help="Funkcja genetyczna")
+    parser.add_argument("-gmg", "--genetic_main_generations", type=int, default=50, help="Generacje")
+    parser.add_argument("-gmp", "--genetic_main_population_size", type=int, default=20, help="Populacja")
+    parser.add_argument("-gmc", "--genetic_main_crossover", type=str, default="one_point", help="Łączenie generacji")
+    parser.add_argument("-gmm", "--genetic_main_mutation_rate", type=float, default=0.1, help="Współczynnik mutacji")
+    parser.add_argument("-gmt", "--genetic_main_mutation_method", type=str, default="bit_flip_mutation", help="Rodzaj mutacji")
+    parser.add_argument("-gms", "--genetic_main_stop_condition", type=str, default="no_improvement", help="Warunek zakończenia")
+    parser.add_argument("-gmi", "--genetic_main_max_no_improving_generations", type=int, default=10, help="Limit generacji bez poprawy")
 
     args = parser.parse_args()
     graph, vertices, edges = graph_tools.load_graph(args.graph)
@@ -60,7 +69,15 @@ def main():
                 max_iter=args.simulate_annealing_max_iteration,
                 cooling_rate=args.simulate_annealing_cooling_rate)
 
-
+    elif args.genetic_main:
+        gen_main.genetic_main(graph,
+                generations=args.genetic_main_generations,
+                population_size=args.genetic_main_population_size,
+                crossover_method=args.genetic_main_crossover,
+                mutation_rate=args.genetic_main_mutation_rate,
+                mutation_method=args.genetic_main_mutation_method,
+                stop_condition=args.genetic_main_stop_condition,
+                max_no_improving_generations=args.genetic_main_max_no_improving_generations)
 
 if __name__ == "__main__":
     main()

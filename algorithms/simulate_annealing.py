@@ -2,6 +2,7 @@ from algorithms.optimization_problem import max_cut_goal_function, random_partit
 import random
 import math
 
+
 def simulate_annealing(graph, temperature, cooling_rate, max_iter):
     partition = random_partition(graph)
     cut = max_cut_goal_function(graph, partition, False)
@@ -16,7 +17,6 @@ def simulate_annealing(graph, temperature, cooling_rate, max_iter):
 
         delta = neighbor_cut - cut
 
-        # Accept if better or with probability exp(delta / temp)
         if delta > 0 or math.exp(delta / temp) > random.random():
             partition = neighbor_partition
             cut = neighbor_cut
