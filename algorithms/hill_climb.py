@@ -33,7 +33,7 @@ def hill_climb_best_neighbour(graph):
         print("Najlepszy sąsiad: ", best_partition)
         print("Końcowy podział: ", best_cut)
 
-        return best_neighbour
+        return best_cut
 
 
 # Funkcja wspinaczkowa z wyborem najlepszego sąsiada
@@ -71,4 +71,4 @@ def hill_climb_best_neighbour_random(graph):
     print("Najlepszy sąsiad: ", best_partition)
     print("Końcowy podział: ", best_cut)
 
-    return partition
+    return best_cut

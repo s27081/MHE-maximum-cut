@@ -8,6 +8,7 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
     no_improving_generations = 0
     best_generation = 0
     best_cut = max_cut_goal_function(graph, population[0][0], False)
+    elite_size = 1
 
     for generation in range(generations):
         new_population = []
@@ -23,29 +24,28 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
                 raise ValueError("Brak takiego łączenia generacji")
 
             if mutation_method == "bit_flip_mutation":
-                bit_flip_mutation(child1, mutation_rate)
-                bit_flip_mutation(child2, mutation_rate)
+                child1 = bit_flip_mutation(child1, mutation_rate)
+                child2 = bit_flip_mutation(child2, mutation_rate)
             elif mutation_method == "swap_mutation":
-                swap_mutation(child1, mutation_rate)
-                swap_mutation(child2, mutation_rate)
+                child1 = swap_mutation(child1, mutation_rate)
+                child2 = swap_mutation(child2, mutation_rate)
             else:
                 raise ValueError("Brak mutacji")
+
             fitness_cut_child1 = max_cut_goal_function(graph, child1, False)
             fitness_cut_child2 = max_cut_goal_function(graph, child2, False)
 
             new_population.append((child1, fitness_cut_child1))
             new_population.append((child2, fitness_cut_child2))
 
-        new_population_sorted = []
-        for individual in new_population:
-            new_population_sorted.append(individual)
+        new_population.sort(key=lambda x: x[1], reverse=True)
+        # population = new_population_sorted[:population_size]
+        population = new_population[:population_size - elite_size] + population[:elite_size]
 
-        new_population_sorted.sort(key=lambda x: x[1], reverse=True)
-        population = new_population_sorted[:population_size]
+        population.sort(key=lambda x: x[1], reverse=True)
 
         print("Generacja: ", generation+1, " najlepszy wynik: ", population[0][1])
-        print(population[0][1])
-        print(best_cut)
+
         if population[0][1] > best_cut:
             best_cut = population[0][1]
             best_generation = generation + 1
@@ -53,21 +53,20 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
         else:
             no_improving_generations += 1
 
-        if stop_condition == 'max_generations' and generation+1 >= generations:
-            print("Koniec. Maksymalna ilość generacji: ", generation+1)
+        if stop_condition == 'max_generations' and generation + 1 >= generations:
+            print("Koniec. Maksymalna ilość generacji: ", generation)
             break
         elif stop_condition == "no_improvement" and no_improving_generations >= max_no_improving_generations:
             print("Koniec. Maksymalna ilość iteracji bez poprawy: ", no_improving_generations)
             break
-        else:
-            raise ValueError("Brak sposobu kończenia programu")
 
     print("======================")
-    print("Najlepsza generacja: ", best_generation+1)
+    print("Najlepsza generacja: ", best_generation)
     print("Najlepsze cięcie: ", best_cut)
 
 
-def tournament_selection(population, k=3):
+def tournament_selection(population):
+    k = len(population) // 2
     picked_individual = random.sample(population, k)
     best_individual = picked_individual[0]
     for individual in picked_individual[1:]:
