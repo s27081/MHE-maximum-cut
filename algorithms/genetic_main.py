@@ -23,11 +23,11 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
                 raise ValueError("Brak takiego łączenia generacji")
 
             if mutation_method == "bit_flip_mutation":
-                bit_flip_mutation(child1, mutation_rate)
-                bit_flip_mutation(child2, mutation_rate)
+                child1 = bit_flip_mutation(child1, mutation_rate)
+                child2 = bit_flip_mutation(child2, mutation_rate)
             elif mutation_method == "swap_mutation":
-                swap_mutation(child1, mutation_rate)
-                swap_mutation(child2, mutation_rate)
+                child1 = swap_mutation(child1, mutation_rate)
+                child2 = swap_mutation(child2, mutation_rate)
             else:
                 raise ValueError("Brak mutacji")
             fitness_cut_child1 = max_cut_goal_function(graph, child1, False)
@@ -44,8 +44,6 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
         population = new_population_sorted[:population_size]
 
         print("Generacja: ", generation+1, " najlepszy wynik: ", population[0][1])
-        print(population[0][1])
-        print(best_cut)
         if population[0][1] > best_cut:
             best_cut = population[0][1]
             best_generation = generation + 1
@@ -59,8 +57,6 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
         elif stop_condition == "no_improvement" and no_improving_generations >= max_no_improving_generations:
             print("Koniec. Maksymalna ilość iteracji bez poprawy: ", no_improving_generations)
             break
-        else:
-            raise ValueError("Brak sposobu kończenia programu")
 
     print("======================")
     print("Najlepsza generacja: ", best_generation+1)
