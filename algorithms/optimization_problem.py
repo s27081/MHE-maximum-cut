@@ -6,7 +6,7 @@ def random_partition(graph):
     partition = {}
     for node in graph:
         partition[node] = random.choice([0,1])
-    print("Losowy podział: ",partition)
+    #print("Losowy podział: ",partition)
     return partition
 
 

@@ -1,9 +1,11 @@
 import random
 from algorithms.optimization_problem import max_cut_goal_function, random_partition
+from tools.time_checker import checkTime
+from concurrent.futures import ProcessPoolExecutor
 
 
 def genetic_main(graph, generations, population_size, crossover_method, mutation_rate, mutation_method, stop_condition, max_no_improving_generations):
-    population = generate_population(graph, population_size)
+    population, sequence_time = checkTime(generate_population_parallel, graph, population_size)
     population.sort(key=lambda x: x[1], reverse=True)
     no_improving_generations = 0
     best_generation = 0
@@ -63,6 +65,7 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
     print("======================")
     print("Najlepsza generacja: ", best_generation)
     print("Najlepsze cięcie: ", best_cut)
+    print("Czas generowania populacji: ", sequence_time, " sekund")
 
 
 def tournament_selection(population):
@@ -82,6 +85,19 @@ def generate_population(graph, population_size):
         fitness_cut = max_cut_goal_function(graph, individual_partition, False)
         population.append((individual_partition, fitness_cut))
     return population
+
+
+def generate_population_parallel(graph, population_size):
+    with ProcessPoolExecutor() as executor:
+        individuals = [random_partition(graph) for _ in range(population_size)]
+        args = [(graph, part) for part in individuals]
+        fitness_scores = list(executor.map(evaluate_individual, args))
+    return list(zip(individuals, fitness_scores))
+
+
+def evaluate_individual(args):
+    graph, partition = args
+    return max_cut_goal_function(graph, partition, False)
 
 
 def one_point_crossover(parent1, parent2, output):
