@@ -1,16 +1,16 @@
 import random
 from algorithms.optimization_problem import max_cut_goal_function, random_partition
+from concurrent.futures import ProcessPoolExecutor
 
 
-def genetic_main(graph, generations, population_size, crossover_method, mutation_rate, mutation_method, stop_condition,
-                 max_no_improving_generations, output=True):
+def genetic_main_parallel(graph, generations, population_size, crossover_method, mutation_rate, mutation_method,
+                          stop_condition, max_no_improving_generations):
     population = generate_population(graph, population_size)
     population.sort(key=lambda x: x[1], reverse=True)
     no_improving_generations = 0
     best_generation = 0
     best_cut = max_cut_goal_function(graph, population[0][0], False)
     elite_size = 1
-    score_history = [best_cut]
 
     for generation in range(generations):
         new_population = []
@@ -46,8 +46,7 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
 
         population.sort(key=lambda x: x[1], reverse=True)
 
-        if output:
-            print("Generacja: ", generation+1, " najlepszy wynik: ", population[0][1])
+        print("Generacja: ", generation+1, " najlepszy wynik: ", population[0][1])
 
         if population[0][1] > best_cut:
             best_cut = population[0][1]
@@ -57,21 +56,30 @@ def genetic_main(graph, generations, population_size, crossover_method, mutation
             no_improving_generations += 1
 
         if stop_condition == 'max_generations' and generation + 1 >= generations:
-            if output:
-                print("Koniec. Maksymalna ilość generacji: ", generation+1)
+            print("Koniec. Maksymalna ilość generacji: ", generation)
             break
         elif stop_condition == "no_improvement" and no_improving_generations >= max_no_improving_generations:
-            if output:
-                print("Koniec. Maksymalna ilość iteracji bez poprawy: ", no_improving_generations)
+            print("Koniec. Maksymalna ilość iteracji bez poprawy: ", no_improving_generations)
             break
 
-        score_history.append(best_cut)
-    if output:
-        print("======================")
-        print("Najlepsza generacja: ", best_generation)
-        print("Najlepsze cięcie: ", best_cut)
+    print("======================")
+    print("Najlepsza generacja: ", best_generation)
+    print("Najlepsze cięcie: ", best_cut)
 
-    return best_cut, score_history
+    return best_cut
+
+
+def generate_population(graph, population_size):
+    with ProcessPoolExecutor() as executor:
+        individuals = [random_partition(graph) for _ in range(population_size)]
+        args = [(graph, individual) for individual in individuals]
+        fitness_scores = list(executor.map(evaluate_individual, args))
+    return list(zip(individuals, fitness_scores))
+
+
+def evaluate_individual(args):
+    graph, partition = args
+    return max_cut_goal_function(graph, partition, False)
 
 
 def tournament_selection(population):
@@ -82,15 +90,6 @@ def tournament_selection(population):
         if individual[1] > best_individual[1]:
             best_individual = individual
     return best_individual
-
-
-def generate_population(graph, population_size):
-    population = []
-    for _ in range(population_size):
-        individual_partition = random_partition(graph)
-        fitness_cut = max_cut_goal_function(graph, individual_partition, False)
-        population.append((individual_partition, fitness_cut))
-    return population
 
 
 def one_point_crossover(parent1, parent2, output):

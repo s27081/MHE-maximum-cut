@@ -3,7 +3,7 @@ import random
 
 
 # Funkcja wspinaczkowa z wyborem najlepszego sąsiada
-def hill_climb_best_neighbour(graph):
+def hill_climb_best_neighbour(graph, output):
 
     partition = random_partition(graph)
     initial_partition = partition
@@ -17,8 +17,9 @@ def hill_climb_best_neighbour(graph):
         best_partition = partition
         for neighbour_partition, cut in neighbours:
             if cut > best_cut:
-                print("Znaleziono lepsze rozwiązanie: ", neighbour_partition)
-                print("Podział sąsiada: ", cut)
+                if output:
+                    print("Znaleziono lepsze rozwiązanie: ", neighbour_partition)
+                    print("Podział sąsiada: ", cut)
                 best_cut = cut
                 best_partition = neighbour_partition
 
@@ -37,7 +38,7 @@ def hill_climb_best_neighbour(graph):
 
 
 # Funkcja wspinaczkowa z wyborem najlepszego sąsiada
-def hill_climb_best_neighbour_random(graph):
+def hill_climb_best_neighbour_random(graph, output):
 
     partition = random_partition(graph)
     initial_partition = partition.copy()
@@ -62,8 +63,9 @@ def hill_climb_best_neighbour_random(graph):
         partition = best_partition
         solution = best_cut
 
-        print("Znaleziono lepsze rozwiązanie: ", best_partition)
-        print("Podział sąsiada: ", best_cut)
+        if output:
+            print("Znaleziono lepsze rozwiązanie: ", best_partition)
+            print("Podział sąsiada: ", best_cut)
 
     print("=============")
     print("Rozwiązanie początkowe: ", initial_partition)

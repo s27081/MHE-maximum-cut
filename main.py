@@ -6,6 +6,18 @@ import algorithms.hill_climb as hill
 import algorithms.tabu_search as tabu
 import algorithms.simulate_annealing as annealing
 import algorithms.genetic_main as gen_main
+import algorithms.genetic_main_parallel as gen_main_par
+import algorithms.genetic_main_island as gen_main_is
+import tools.experiment as exp
+import time
+
+
+def check_time(func, *args, **kwargs):
+    start_time = time.time()
+    func(*args, **kwargs)
+    end_time = time.time()
+    print("Czas wykonywania: ", (end_time - start_time), " sekund")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Maximum cut problem")
@@ -33,51 +45,90 @@ def main():
     parser.add_argument("-gmt", "--genetic_main_mutation_method", type=str, choices=["bit_flip_mutation", "swap_mutation"], default="bit_flip_mutation", help="Rodzaj mutacji")
     parser.add_argument("-gms", "--genetic_main_stop_condition", type=str, choices=["max_generations", "no_improvement"], default="no_improvement", help="Warunek zakończenia")
     parser.add_argument("-gmi", "--genetic_main_max_no_improving_generations", type=int, default=10, help="Limit generacji bez poprawy")
+    parser.add_argument("-gp", "--genetic_main_parallel", action="store_true", help="Funkcja genetyczna równoległa")
+    parser.add_argument("-gi", "--genetic_main_island", action="store_true", help="Funkcja genetyczna wyspy")
+    parser.add_argument("-gin", "--genetic_main_island_number", type=int, default=3, help="Liczba wysp dla algorytmu genetycznego")
+    parser.add_argument("-gimr", "--genetic_main_island_migration_rate", type=int, default=3 , help="Liczba osobników migrujących dla algorytmu genetycznego")
+    parser.add_argument("-gimi", "--genetic_main_island_migration_interval", type=int, default=3, help="Co ile generacji osobniki migrują")
+    parser.add_argument("-tc", "--time_checker", action="store_true", help="Sprawdź czas wykonywania programu")
+    parser.add_argument("-e", "--experiment", action="store_true", help="Porównaj dwie metody")
 
     args = parser.parse_args()
     graph, vertices, edges = graph_tools.load_graph(args.graph)
 
+    def run(func, *f_args, **f_kwargs):
+        if args.time_checker:
+            check_time(func, *f_args, **f_kwargs)
+        else:
+            func(*f_args, **f_kwargs)
+
     if args.random_partition:
-        optimization.random_partition(graph)
+        run(optimization.random_partition, graph)
 
     elif args.max_cut:
         partition = optimization.random_partition(graph)
-        optimization.max_cut_goal_function(graph, partition, True)
+        run(optimization.max_cut_goal_function, graph, partition, False)
 
     elif args.neighborhood:
         partition = optimization.random_partition(graph)
-        optimization.get_neighboorhood_solution(graph, partition, True)
-        
+        run(optimization.get_neighboorhood_solution, graph, partition, False)
+
     elif args.full_search:
-        full.full_search(graph, vertices)
+        run(full.full_search, graph, vertices)
 
     elif args.hill_climb_classic:
-        hill.hill_climb_best_neighbour(graph)
+        run(hill.hill_climb_best_neighbour, graph, False)
 
     elif args.hill_climb_random:
-        hill.hill_climb_best_neighbour_random(graph)
+        run(hill.hill_climb_best_neighbour_random, graph, False)
 
     elif args.tabu_search:
-        tabu.tabu_search(graph,
-                max_iterations=args.tabu_iterations,
-                tabu_list_size=args.tabu_list_size,
-                tabu_history_size=args.tabu_history_size)
+        run(tabu.tabu_search,
+            graph,
+            max_iterations=args.tabu_iterations,
+            tabu_list_size=args.tabu_list_size,
+            tabu_history_size=args.tabu_history_size)
 
     elif args.simulate_annealing:
-        annealing.simulate_annealing(graph,
-                temperature=args.simulate_annealing_temperature,
-                max_iter=args.simulate_annealing_max_iteration,
-                cooling_rate=args.simulate_annealing_cooling_rate)
+        run(annealing.simulate_annealing,
+            graph,
+            temperature=args.simulate_annealing_temperature,
+            max_iter=args.simulate_annealing_max_iteration,
+            cooling_rate=args.simulate_annealing_cooling_rate)
 
     elif args.genetic_main:
-        gen_main.genetic_main(graph,
-                generations=args.genetic_main_generations,
-                population_size=args.genetic_main_population_size,
-                crossover_method=args.genetic_main_crossover,
-                mutation_rate=args.genetic_main_mutation_rate,
-                mutation_method=args.genetic_main_mutation_method,
-                stop_condition=args.genetic_main_stop_condition,
-                max_no_improving_generations=args.genetic_main_max_no_improving_generations)
+        run(gen_main.genetic_main,
+            graph,
+            generations=args.genetic_main_generations,
+            population_size=args.genetic_main_population_size,
+            crossover_method=args.genetic_main_crossover,
+            mutation_rate=args.genetic_main_mutation_rate,
+            mutation_method=args.genetic_main_mutation_method,
+            stop_condition=args.genetic_main_stop_condition,
+            max_no_improving_generations=args.genetic_main_max_no_improving_generations)
+    elif args.genetic_main_parallel:
+        run(gen_main_par.genetic_main_parallel,
+            graph,
+            generations=args.genetic_main_generations,
+            population_size=args.genetic_main_population_size,
+            crossover_method=args.genetic_main_crossover,
+            mutation_rate=args.genetic_main_mutation_rate,
+            mutation_method=args.genetic_main_mutation_method,
+            stop_condition=args.genetic_main_stop_condition,
+            max_no_improving_generations=args.genetic_main_max_no_improving_generations)
+    elif args.genetic_main_island:
+        run(gen_main_is.genetic_main_island,
+            graph,
+            generations=args.genetic_main_generations,
+            population_size=args.genetic_main_population_size,
+            crossover_method=args.genetic_main_crossover,
+            mutation_rate=args.genetic_main_mutation_rate,
+            mutation_method=args.genetic_main_mutation_method,
+            num_islands=args.genetic_main_island_number,
+            migration_rate=args.genetic_main_island_migration_rate,
+            migration_interval=args.genetic_main_island_migration_interval)
+    elif args.experiment:
+        run(exp.experiment, graph)
 
 if __name__ == "__main__":
     main()

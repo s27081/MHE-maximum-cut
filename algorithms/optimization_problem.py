@@ -39,8 +39,8 @@ def get_neighboorhood_solution(graph, partition, output):
         else:
             neighbor_total_cut = max_cut_goal_function(graph, neighbor_partition, False)
         neighborhood.append((neighbor_partition, neighbor_total_cut))
-
-    print("Sąsiedztwo: ", neighborhood)
+    if output:
+        print("Sąsiedztwo: ", neighborhood)
 
     return neighborhood
 

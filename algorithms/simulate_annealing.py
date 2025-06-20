@@ -3,12 +3,13 @@ import random
 import math
 
 
-def simulate_annealing(graph, temperature, cooling_rate, max_iter):
+def simulate_annealing(graph, temperature, cooling_rate, max_iter, output=True):
     partition = random_partition(graph)
     cut = max_cut_goal_function(graph, partition, False)
     best_partition = partition.copy()
     best_cut = cut
     temp = temperature
+    score_history = [cut]
 
     for i in range(max_iter):
         neighborhood = get_neighboorhood_solution(graph, partition, False)
@@ -26,6 +27,8 @@ def simulate_annealing(graph, temperature, cooling_rate, max_iter):
                 best_cut = neighbor_cut
 
         temp *= cooling_rate
-        print("Podział: ", cut, " Najlepszy podział: ", best_cut, " Temperatura: ", temp)
+        score_history.append(best_cut)
+        if output:
+            print("Podział: ", cut, " Najlepszy podział: ", best_cut, " Temperatura: ", temp)
 
-    return best_partition, best_cut
+    return best_cut, score_history
