@@ -87,14 +87,16 @@ def main():
             graph,
             max_iterations=args.tabu_iterations,
             tabu_list_size=args.tabu_list_size,
-            tabu_history_size=args.tabu_history_size)
+            tabu_history_size=args.tabu_history_size,
+            output=True)
 
     elif args.simulate_annealing:
         run(annealing.simulate_annealing,
             graph,
             temperature=args.simulate_annealing_temperature,
             max_iter=args.simulate_annealing_max_iteration,
-            cooling_rate=args.simulate_annealing_cooling_rate)
+            cooling_rate=args.simulate_annealing_cooling_rate,
+            output=True)
 
     elif args.genetic_main:
         run(gen_main.genetic_main,
@@ -105,7 +107,8 @@ def main():
             mutation_rate=args.genetic_main_mutation_rate,
             mutation_method=args.genetic_main_mutation_method,
             stop_condition=args.genetic_main_stop_condition,
-            max_no_improving_generations=args.genetic_main_max_no_improving_generations)
+            max_no_improving_generations=args.genetic_main_max_no_improving_generations,
+            output=True)
     elif args.genetic_main_parallel:
         run(gen_main_par.genetic_main_parallel,
             graph,
@@ -126,7 +129,8 @@ def main():
             mutation_method=args.genetic_main_mutation_method,
             num_islands=args.genetic_main_island_number,
             migration_rate=args.genetic_main_island_migration_rate,
-            migration_interval=args.genetic_main_island_migration_interval)
+            migration_interval=args.genetic_main_island_migration_interval,
+            output=True)
     elif args.experiment:
         run(exp.experiment, graph)
 

@@ -28,7 +28,7 @@ def run_method(method_func, graph, params, num_runs=5):
         all_times.append(elapsed)
         all_memories.append(memory)
 
-    avg_scores = np.mean(all_scores, axis=0)
+    avg_scores = np.mean(all_scores)
     avg_time = np.mean(all_times)
     avg_memory = np.mean(all_memories)
     return avg_scores, avg_time, all_scores, all_times, avg_memory, iteration_history
@@ -115,7 +115,7 @@ def plot_convergence_histories(histories, title, method_label):
     plt.show()
 
 def compare_best_results(results):
-    best_tabu_score = -float('inf')
+    best_tabu_score = 0.0
     best_tabu_params = None
     best_tabu_score_history = None
     best_tabu_time = None
@@ -132,7 +132,7 @@ def compare_best_results(results):
             best_tabu_iteration_history = entry['iteration_history']
             best_tabu_score_difference = max(entry['score_history']) - min(entry['score_history'])
 
-    best_annealing_score = -float('inf')
+    best_annealing_score = 0.0
     best_annealing_params = None
     best_annealing_history = None
     best_annealing_time = None
@@ -149,7 +149,7 @@ def compare_best_results(results):
             best_annealing_iteration_history = entry['iteration_history']
             best_annealing_score_difference = max(entry['score_history']) - min(entry['score_history'])
 
-    best_genetic_score = -float('inf')
+    best_genetic_score = 0.0
     best_genetic_params = None
     best_genetic_history = None
     best_genetic_time = None
@@ -204,12 +204,13 @@ def random_tabu_params(n=15):
         params_list.append(params)
     return params_list
 
+
 def random_annealing_params(n=15):
     params_list = []
     for _ in range(n):
         params = {
             'temperature': random.choice([500, 1000, 1500, 2000]),
-            'max_iter': random.choice([50, 75, 100, 125, 150]),
+            'max_iter': random.choice([50, 100, 125, 150]),
             'cooling_rate': round(random.uniform(0.85, 0.99), 3),
             'output': False
         }

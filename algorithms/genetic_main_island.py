@@ -3,7 +3,7 @@ from algorithms.optimization_problem import max_cut_goal_function, random_partit
 
 
 def genetic_main_island(graph, generations, population_size, crossover_method, mutation_rate, mutation_method,
-                        num_islands, migration_rate, migration_interval):
+                        num_islands, migration_rate, migration_interval, output=True):
     islands = []
     elite_size = 1
     for _ in range(num_islands):

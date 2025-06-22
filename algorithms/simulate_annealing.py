@@ -29,6 +29,8 @@ def simulate_annealing(graph, temperature, cooling_rate, max_iter, output=True):
         temp *= cooling_rate
         score_history.append(best_cut)
         if output:
-            print("Podział: ", cut, " Najlepszy podział: ", best_cut, " Temperatura: ", temp)
+            print("Podział: ", cut, " Temperatura: ", temp)
 
+    if output:
+        print("Najlepszy wynik: ", best_cut, " Najlepsza partycja: ", best_partition)
     return best_cut, score_history
